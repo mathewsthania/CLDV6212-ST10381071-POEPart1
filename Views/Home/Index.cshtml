@@ -1,0 +1,34 @@
+﻿<!--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*START*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-->
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!-- the form to upload an image -->
+<form asp-action="UploadImage" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <button type="submit">Upload Image</button>
+</form>
+
+<!-- form to add a customer profile -->
+<form asp-action="AddCustomerProfile" method="post">
+    <input type="text" name="FirstName" placeholder="First Name" />
+    <input type="text" name="LastName" placeholder="Last Name" />
+    <input type="email" name="Email" placeholder="Email" />
+    <input type="text" name="PhoneNumber" placeholder="Phone Number" />
+    <button type="submit">Add Profile</button>
+</form>
+
+<!-- form to process an order -->
+<form asp-action="ProcessOrder" method="post">
+    <input type="text" name="orderID" placeholder="Order ID" />
+    <button type="submit">Process Order</button>
+</form>
+
+<!-- form to upload a contract -->
+<form asp-action="UploadContract" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <button type="submit">Upload Contract</button>
+</form>
+
+<!--//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*END*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//-->
