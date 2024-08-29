@@ -8,16 +8,20 @@ namespace CLDV6212_ST10381071_POEPart1
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // configuration for Azure Storage
+            var configuration = builder.Configuration;
+            var connectionString = configuration.GetConnectionString("AzureStorage");
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
-            var app = builder.Build();
 
             // Register the custom services
             builder.Services.AddSingleton<BlobService>();
             builder.Services.AddSingleton<TableService>();
             builder.Services.AddSingleton<QueueService>();  
             builder.Services.AddSingleton<FileService>();
+
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -42,3 +46,5 @@ namespace CLDV6212_ST10381071_POEPart1
         }
     }
 }
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*END*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
