@@ -31,11 +31,27 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
             return View();
         }
 
-        // action created - to return the privacy view
-        public IActionResult Privacy()
+        // action created - to return the Add Customer Profile view
+        public IActionResult AddCustomerProfile()
         {
             return View();
         }
+
+        public IActionResult SendMessage()
+        {
+            return View();
+        }
+
+        public IActionResult UploadContract()
+        {
+            return View();
+        }
+
+        public IActionResult UploadImage()
+        {
+            return View();
+        }
+
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
