@@ -1,5 +1,14 @@
-﻿@{
+﻿<!--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*START*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-->@{
+
 	ViewBag.Title = "Upload Image";
 }
 
 <h2>Upload Image to Azure Blob Storage</h2>
+
+<!-- the form to upload an image -->
+<form asp-action="UploadImage" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <button type="submit">Upload Image</button>
+</form>
+
+<!--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*END*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-->

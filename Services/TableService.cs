@@ -22,7 +22,7 @@ namespace CLDV6212_ST10381071_POEPart1.Services
         }
 
         // method to add an entity(customerProfile) to the table
-        public async Task AddEntityAsync(customerProfile profile)
+        public async Task AddEntityAsync(CustomerProfile profile)
         {
             // adding the entity (customerProfile) to the table
             await _tableClient.AddEntityAsync(profile);

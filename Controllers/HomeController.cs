@@ -37,7 +37,7 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
             return View();
         }
 
-        public IActionResult SendMessage()
+        public IActionResult ProcessOrder()
         {
             return View();
         }
@@ -81,7 +81,7 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
 
         // action created - to handle adding a new customer profile
         [HttpPost]
-        public async Task<IActionResult> AddCustomerProfile(customerProfile profile)
+        public async Task<IActionResult> AddCustomerProfile(CustomerProfile profile)
         {
             if (ModelState.IsValid)
             {

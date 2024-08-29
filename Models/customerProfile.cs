@@ -2,17 +2,16 @@
 using Azure.Data.Tables;
 using System;
 
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*START*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*START*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
 
 namespace CLDV6212_ST10381071_POEPart1.Models
 {
-    // defining customerProfile that implements te ITableEntity interface
-    public class customerProfile : ITableEntity
+    public class CustomerProfile : ITableEntity
     {
-        public string PartionKey { get; set; }
+        public string PartitionKey { get; set; }
         public string RowKey { get; set; }
-        public DateTimeOffset? TimeStamp { get; set; }
-        public Etag Etag { get; set; }
+        public DateTimeOffset? Timestamp { get; set; } 
+        public ETag ETag { get; set; } 
 
 
         // Custom Properties
@@ -21,10 +20,12 @@ namespace CLDV6212_ST10381071_POEPart1.Models
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
 
-        public customerProfile()
+        public CustomerProfile()
         {
-            PartionKey = "CustomerProfile";
+            PartitionKey = "CustomerProfile";
             RowKey = Guid.NewGuid().ToString();
         }
     }
 }
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*END*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//

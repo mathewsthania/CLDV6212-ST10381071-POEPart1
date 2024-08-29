@@ -7,13 +7,47 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CLDV6212_ST10381071_POEPart1.styles.css" asp-append-version="true" />
+    <style> /* adding in navigation bar design */
+        .navbar-nav .nav-item {
+            position: relative;
+            padding: 0 15px;
+        }
+
+        .navbar-nav .nav-item:not(:last-child)::after {
+            content: "|";
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .navbar-nav .nav-item .nav-link{
+            font-family: 'Century Gothic', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
+            padding: 15px;
+            text-decoration: none;
+        }
+
+        .navbar-nav .nav-item .nav-link:hover {
+            color: black !important;
+            background-color: white !important;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-black border-bottom box-shadow mb-3">
             <div class="container-fluid">
 
-                <a class="nav-link text-light nav bar-brand" asp-area="" asp-controller="Home" asp-action="Index">ABC Retail</a>
+                <img src="/css/ABC_RETAIL_LOGO_BLACK.png" alt="ABC RETAIL LOGO" width="200" height="50" style="margin-left: 10px;" />
+                
+                <a class="nav-link text-light nav bar-brand" asp-area="" asp-controller="Home" asp-action="Index"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,19 +55,19 @@
                 <div class="navbar-collapse collapse">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="SendMessage">Send Message</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="ProcessOrder">Process Order</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="UploadImage">Upload Image</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="UploadImage">Upload Image</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="UploadContract">Upload Contract</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="UploadContract">Upload Contract</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AddCustomerProfile">Add Customer Profile</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="AddCustomerProfile">Add Customer Profile</a>
                         </li>
                     </ul>
                 </div>
