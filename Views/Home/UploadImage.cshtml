@@ -3,10 +3,26 @@
 	ViewBag.Title = "Upload Image";
 }
 
+<!-- success message for image added -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- error message for image not added -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <!--ADDING IN CANVA DESIGN I CREATED FOR THE HEADINGS-->
 <img src="~/css/UPLOAD_IMAGE2.png" alt="UploadImageABC" style="width: 100%; height: auto;">
 
-<div class="upload-contiainer">
+<div class="upload-containier">
 
     <div style="display: flex;">
         <img src="~/ABCLogo/WEB_IMAGE_1.jpg" width="324" height="325" />
@@ -17,7 +33,7 @@
 
     <!-- the form to upload an image -->
     <form asp-action="UploadImage" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" class="form-control" required />
+        <input type="file" name="file" required />
 
         <button type="submit" class="uploadImage-btn">Upload Image</button>
     </form>
@@ -53,19 +69,37 @@
         width: 100%;
         background-color: black;
         color: white;
-        border: black;
+        border: 2px solid black;
         padding: 10px;
         font-family: 'Century Gothic', sans-serif;
         font-weight: bold;
         font-size: 16px;
-        transition: background-color 0.3s, color 0.3s;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
-
 
     /* adding in hover effects for the add profile button*/
     .uploadImage-btn:hover {
-        background-color: black;
-        color: white; /* text colour */
+        background-color: white;
+        border-color: black;
+        color: black; /* text colour */
+    }
+
+    .alert {
+        margin: 20px auto;
+        width: 90%;
+        max-width: 600px;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
     }
 
 </style>

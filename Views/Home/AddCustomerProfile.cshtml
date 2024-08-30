@@ -4,12 +4,28 @@
     ViewData["Title"] = "Add Customer Profile";
 }
 
+<!-- success message for customer profile added -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- error message for customer profile not added -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <!--ADDING IN CANVA DESIGN I CREATED FOR THE HEADINGS-->
 <img src="~/css/ADD_CUSTOMER_PROFILE.png" alt="AddCustomerProfileABC" style="width: 100%; height: auto;">
 
 <div class="customer-profile-container">
 
-    <img src="~/css/ABC_RETAIL_LOGO.jpeg" alt="CustomerProfile-pic" class="customer-profilePic" />
+    <img src="~/ABCLogo/ABCRetail_White_Logo.jpg" alt="CustomerProfile-pic" class="customer-profilePic" />
 
 <!-- form to add a customer profile -->
     <form asp-action="AddCustomerProfile" method="post">
@@ -55,18 +71,37 @@
         width: 100%;
         background-color: white;
         color: black;
-        border: black;
+        border: 2px solid black;
         padding: 10px;
         font-family: 'Century Gothic', sans-serif;
         font-weight: bold;
         font-size: 16px;
-        transition: background-color 0.3s, color 0.3s;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
 
     /* adding in hover effects for the add profile button*/
     .submit-btn:hover{
         background-color: black;
+        border-color:white;
         color: white; /* text colour */
+    }
+
+    .alert {
+        margin: 20px auto;
+        width: 90%;
+        max-width: 600px;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
     }
 
 </style>

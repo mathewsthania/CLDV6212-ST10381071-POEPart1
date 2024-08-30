@@ -4,13 +4,96 @@
     ViewData["Title"] = "Process Order";
 }
 
+<!-- success message for process added -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- error message for process not added -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <!--ADDING IN CANVA DESIGN I CREATED FOR THE HEADINGS-->
 <img src="~/css/PROCESS_ORDER.png" alt="ProcessOrderABC" style="width: 100%; height: auto;">
 
-<!-- form to process an order -->
-<form asp-action="ProcessOrder" method="post">
-    <input type="text" name="orderID" placeholder="Order ID" />
-    <button type="submit">Process Order</button>
-</form>
+<div class="processOrder-containier">
+
+     <div style="display: flex;">
+        <img src="~/ABCLogo/WEB_IMAGE_1.jpg" width="324" height="325" />
+        <img src="~/ABCLogo/WEB_IMAGE_2.jpg" width="324" height="325" />
+        <img src="~/ABCLogo/WEB_IMAGE_3.jpg" width="324" height="325" />
+        <img src="~/ABCLogo/WEB_IMAGE_4.jpg" width="324" height="325" />
+    </div>
+
+    <!-- form to process an order -->
+    <form asp-action="ProcessOrder" method="post">
+        <input type="text" name="orderID" placeholder="Order ID" class="form-control" />
+
+        <button type="submit" class="processOrder-btn">Process Order</button>
+    </form>
+</div>
+
+<style>
+    .processOrder-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+     /* form control design and text design */
+    .form-control{
+        width: 100%;
+        margin-bottom: 20px;
+        font-family: 'Century Gothic', sans-serif;
+    }
+
+    .processOrder-btn {
+        width: 100%;
+        background-color: black;
+        color: white;
+        border: 2px solid black;
+        padding: 10px;
+        font-family: 'Century Gothic', sans-serif;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    /* adding in hover effects for the add profile button*/
+    .processOrder-btn:hover {
+        background-color: white;
+        border-color: black;
+        color: black; /* text colour */
+    }
+
+    .alert {
+        margin: 20px auto;
+        width: 90%;
+        max-width: 600px;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+</style>
+
+
 
 <!--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*END*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-->

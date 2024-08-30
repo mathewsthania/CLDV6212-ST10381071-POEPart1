@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using CLDV6212_ST10381071_POEPart1.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Diagnostics.Eventing.Reader;
 
 namespace CLDV6212_ST10381071_POEPart1.Controllers
 {
@@ -62,20 +63,35 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+
         // action created = to handle image uploading 
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             if (file != null)
             {
-                using var stream = file.OpenReadStream();
+                try
+                {
+                    using var stream = file.OpenReadStream();
 
-                // uploading the file to the BLOB STORAGE
-                await _blobService.UploadBlobAsync("product-images", file.FileName, stream);
+                    // uploading the file to the BLOB STORAGE
+                    await _blobService.UploadBlobAsync("product-images", file.FileName, stream);
+
+                    TempData["SuccessMessage"] = "Image was successfully uploaded!";
+                }
+
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Image failed to upload,Please try again!";
+                }
             }
-
+            else
+            {
+                TempData["ErrorMessage"] = "No file selected!";
+            }
+        
             // redirecting to the index page
-            return RedirectToAction("Index");
+            return RedirectToAction("UploadImage");
         }
 
 
@@ -85,12 +101,25 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
         {
             if (ModelState.IsValid)
             {
-                // adding the customer profile to the TABLE STORAGE
-                await _tableService.AddEntityAsync(profile);
-            }
+                try
+                {
+                    // adding the customer profile to the TABLE STORAGE
+                    await _tableService.AddEntityAsync(profile);
 
+                    TempData["SuccessMessage"] = "Profile was successfully added!";
+                }
+                catch(Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Profile was not added! Plesae try again.";
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Invalid data!";
+            }
+                
             // redirecting to the index page
-            return RedirectToAction("Index");
+            return RedirectToAction("AddCustomerProfile");
         }
 
 
@@ -98,12 +127,23 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
         [HttpPost]
         public async Task<IActionResult> ProcessOrder(string orderID)
         {
-            // sending a message to the queue to process the order 
-            await _queueService.SendMessageAsync("order-processing", $"Processing order {orderID}");
+            try
+            {
+                // sending a message to the queue to process the order 
+                await _queueService.SendMessageAsync("order-processing", $"Processing order {orderID}");
+
+                TempData["SuccessMessage"] = "Order has been successfully processed!";
+            }
+
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Failed to process order. Please try again!";
+            }
             
             // redirecting to the index page 
-            return RedirectToAction("Index");
+            return RedirectToAction("ProcessOrder");
         }
+
 
         // action created - to handle uploading a contract
         [HttpPost]
@@ -111,14 +151,27 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
         {
             if (file != null)
             {
-                using var stream = file.OpenReadStream();
-                
-                // uploading gile to the FILE SHARE
-                await _fileService.UploadFileAsync("contracts-logs", file.FileName, stream);
+                try
+                {
+                    using var stream = file.OpenReadStream();
+
+                    // uploading gile to the FILE SHARE
+                    await _fileService.UploadFileAsync("contracts-logs", file.FileName, stream);
+
+                    TempData["SuccessMessage"] = "Contract has been successfully uploaded!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Failed to upload contract. Please try again!";
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "No file selected!";
             }
 
             // redirecting to the index page
-            return RedirectToAction("Index");
+            return RedirectToAction("UploadContract");
         }
     }
 }

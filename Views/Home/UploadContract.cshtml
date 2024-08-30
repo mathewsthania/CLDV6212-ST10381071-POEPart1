@@ -3,13 +3,89 @@
     ViewData["Title"] = "Upload a contract";
 }
 
+<!-- success message for contract added -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- error message for contract not added -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <!--ADDING IN CANVA DESIGN I CREATED FOR THE HEADINGS-->
 <img src="~/css/UPLOAD_CONTRACT.png" alt="UploadContractABC" style="width: 100%; height: auto;">
 
-<!-- form to upload a contract -->
-<form asp-action="UploadContract" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" />
-    <button type="submit">Upload Contract</button>
-</form>
+<div class="uploadContract-containier">
+
+    <div style="display: flex;">
+        <img src="~/ABCLogo/WEB_IMAGE_1.jpg" width="324" height="325" />
+        <img src="~/ABCLogo/WEB_IMAGE_2.jpg" width="324" height="325" />
+        <img src="~/ABCLogo/WEB_IMAGE_3.jpg" width="324" height="325" />
+        <img src="~/ABCLogo/WEB_IMAGE_4.jpg" width="324" height="325" />
+    </div>
+
+    <!-- form to upload a contract -->
+    <form asp-action="UploadContract" method="post" enctype="multipart/form-data">
+        <input type="file" class="form-control" name="file" />
+
+        <button type="submit" class="uploadContract-btn">Upload Contract</button>
+    </form>
+
+</div>
+
+<style>
+    .uploadContract-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .uploadContract-btn {
+        width: 100%;
+        background-color: black;
+        color: white;
+        border: 2px solid black;
+        padding: 10px;
+        font-family: 'Century Gothic', sans-serif;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.3s, color 0.3s,border-color 0.3s;
+    }
+
+
+    /* adding in hover effects for the add profile button*/
+    .uploadContract-btn:hover {
+        background-color: white;
+        border color: black;
+        color: black; /* text colour */
+    }
+
+    .alert {
+        margin: 20px auto;
+        width: 90%;
+        max-width: 600px;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+</style>
 
 <!--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*END*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-->
