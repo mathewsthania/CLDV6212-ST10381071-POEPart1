@@ -7,13 +7,69 @@
 <!--ADDING IN CANVA DESIGN I CREATED FOR THE HEADINGS-->
 <img src="~/css/ADD_CUSTOMER_PROFILE.png" alt="AddCustomerProfileABC" style="width: 100%; height: auto;">
 
+<div class="customer-profile-container">
+
+    <img src="~/css/ABC_RETAIL_LOGO.jpeg" alt="CustomerProfile-pic" class="customer-profilePic" />
+
 <!-- form to add a customer profile -->
-<form asp-action="AddCustomerProfile" method="post">
-    <input type="text" name="FirstName" placeholder="First Name" />
-    <input type="text" name="LastName" placeholder="Last Name" />
-    <input type="email" name="Email" placeholder="Email" />
-    <input type="text" name="PhoneNumber" placeholder="Phone Number" />
-    <button type="submit">Add Profile</button>
-</form>
+    <form asp-action="AddCustomerProfile" method="post">
+        <input type="text" name="FirstName" class="form-control" placeholder="First Name" required/>
+        <input type="text" name="LastName" class="form-control" placeholder="Last Name" required/>
+        <input type="email" name="Email" class="form-control" placeholder="Email" required/>
+        <input type="text" name="PhoneNumber" class="form-control" placeholder="Phone Number" required/>
+        
+        <button type="submit" class="submit-btn">Add Profile</button>
+    </form>
+
+</div>
+
+<style>
+
+    /* adding in container design */
+    .customer-profile-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: black;
+        text-align: center;
+    }
+    
+
+    .customer-profilePic{
+        width: 450px;
+        height: 300px;
+        margin-bottom: 20px;
+    }
+
+    /* form control design and text design */
+    .form-control{
+        width: 100%;
+        margin-bottom: 20px;
+        font-family: 'Century Gothic', sans-serif;
+    }
+
+    /* adding in design for the add profile button  */
+    .submit-btn{
+        width: 100%;
+        background-color: white;
+        color: black;
+        border: black;
+        padding: 10px;
+        font-family: 'Century Gothic', sans-serif;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* adding in hover effects for the add profile button*/
+    .submit-btn:hover{
+        background-color: black;
+        color: white; /* text colour */
+    }
+
+</style>
+
 
 <!--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*END*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-->

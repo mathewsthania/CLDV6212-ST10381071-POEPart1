@@ -6,10 +6,68 @@
 <!--ADDING IN CANVA DESIGN I CREATED FOR THE HEADINGS-->
 <img src="~/css/UPLOAD_IMAGE2.png" alt="UploadImageABC" style="width: 100%; height: auto;">
 
-<!-- the form to upload an image -->
-<form asp-action="UploadImage" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" />
-    <button type="submit">Upload Image</button>
-</form>
+<div class="upload-contiainer">
+
+    <div style="display: flex;">
+        <img src="~/ABCLogo/WEB_IMAGE_1.jpg" width="324" height="325" />
+        <img src="~/ABCLogo/WEB_IMAGE_2.jpg" width="324" height="325" />
+        <img src="~/ABCLogo/WEB_IMAGE_3.jpg" width="324" height="325" />
+        <img src="~/ABCLogo/WEB_IMAGE_4.jpg" width="324" height="325" />
+    </div>
+
+    <!-- the form to upload an image -->
+    <form asp-action="UploadImage" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" class="form-control" required />
+
+        <button type="submit" class="uploadImage-btn">Upload Image</button>
+    </form>
+
+</div>
+
+<style>
+    .upload-container{
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .image-row {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between; /* Space between images */
+        align-items: center;
+        overflow-x:auto;
+        margin-top: 20px;
+    }
+
+    .image-row img {
+        flex:1;
+        max-width: 19%;
+        height: auto;
+        margin: 0 5px;
+        box-sizing: border-box;
+     }
+
+    .uploadImage-btn{
+        width: 100%;
+        background-color: black;
+        color: white;
+        border: black;
+        padding: 10px;
+        font-family: 'Century Gothic', sans-serif;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+
+    /* adding in hover effects for the add profile button*/
+    .uploadImage-btn:hover {
+        background-color: black;
+        color: white; /* text colour */
+    }
+
+</style>
 
 <!--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*THE*END*OF*FILE*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-->
