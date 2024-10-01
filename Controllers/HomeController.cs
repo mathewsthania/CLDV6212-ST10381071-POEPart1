@@ -1,13 +1,10 @@
 using System.Diagnostics;
-using CLDV6212_ST10381071_POEPart1.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using CLDV6212_ST10381071_POEPart1.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics.Eventing.Reader;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using CLDV6212_ST10381071_POEPart1.Models;
+using CLDV6212_ST10381071_POEPart1.Services;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CLDV6212_ST10381071_POEPart1.Controllers
 {
@@ -75,60 +72,87 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
-            if (file != null)
-            {
-                try
-                {
-                    var functionResponse = await CallBlobFunctionAsync(file);
-
-                    TempData["SuccessMessage"] = "Image was successfully uploaded!";
-                }
-
-                catch (Exception ex)
-                {
-                    TempData["ErrorMessage"] = "Image failed to upload,Please try again!";
-
-                    Console.WriteLine($"Error: {ex}");
-                
-                }
-            }
-            else
+            if (file == null || file.Length == 0)
             {
                 TempData["ErrorMessage"] = "No file selected!";
+                return RedirectToAction("UploadImage");
             }
-        
+                
+            try
+            {
+                var functionResponse = await CallBlobFunctionAsync(file);
+
+                TempData["SuccessMessage"] = "Image was successfully uploaded!";
+            }
+
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Image failed to upload,Please try again!";
+                Console.WriteLine($"Error: {ex}");
+                
+            }
+            
             // redirecting to the index page
             return RedirectToAction("UploadImage");
         }
 
+        // creating method to call the function - uploadblob
+        private async Task<string> CallBlobFunctionAsync(IFormFile file)
+        {
+            using var content = new MultipartFormDataContent();
+            using var stream = file.OpenReadStream();
+
+            var fileContent = new StreamContent(stream);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+
+            content.Add(fileContent, "file", file.FileName);
+
+            var functionUrl = _configuration["FunctionUrls:UploadBlob"]; 
+            functionUrl += $"&containerName=product-images&blobName={file.FileName}";
+
+            var response = await _httpClient.PostAsync(functionUrl, content);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync();
+        }
 
         // action created - to handle adding a new customer profile
         [HttpPost]
         public async Task<IActionResult> AddCustomerProfile(CustomerProfile profile)
         {
-            if (ModelState.IsValid)
+            if (profile == null)
             {
-                try
-                {
-                    // adding the customer profile to the TABLE STORAGE
-                    await _tableService.AddEntityAsync(profile);
+                TempData["ErrorMessage"] = "Customer Profile is null, please try again!";
+                return RedirectToAction("AddCustomerProfile");
+            }
 
-                    TempData["SuccessMessage"] = "Profile was successfully added!";
-                }
-                catch(Exception ex)
-                {
-                    TempData["ErrorMessage"] = "Profile was not added! Plesae try again.";
-                }
-            }
-            else
+            try
             {
-                TempData["ErrorMessage"] = "Invalid data!";
+                var functionResponse = await CallStoreTableInfoFunctionAsync(profile);
+                TempData["SuccessMessage"] = "Customer Profile was successfully added!";
             }
-                
-            // redirecting to the index page
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Profile was not added! Please try again.";
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            // Redirecting to the AddCustomerProfile page
             return RedirectToAction("AddCustomerProfile");
         }
 
+        private async Task<string> CallStoreTableInfoFunctionAsync(CustomerProfile profile)
+        {
+            // Prepare the request data
+            var requestData = new StringContent($"tableName=customerProfiles&partitionKey={profile.PartitionKey}&rowKey={profile.RowKey}&firstName={profile.FirstName}&lastName={profile.LastName}&email={profile.Email}&phoneNumber={profile.PhoneNumber}", Encoding.UTF8, "application/x-www-form-urlencoded");
+
+            var functionUrl = _configuration["FunctionUrls:StoreTableInfo"]; // Adjust based on your configuration
+            var response = await _httpClient.PostAsync(functionUrl, requestData);
+
+            response.EnsureSuccessStatusCode(); // Will throw an exception if the response is not a success
+
+            return await response.Content.ReadAsStringAsync();
+        }
 
         // action created - to handle processing an order
         [HttpPost]
@@ -142,6 +166,8 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
 
             try
             {
+                var functionUrl = _configuration["FunctionUrls:ProcessQueueMessage"];
+
                 // sending a message to the queue to process the order 
                 await _queueService.SendMessageAsync("order-processing", $"Processing order {orderID}");
 
@@ -168,6 +194,8 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
                 {
                     using var stream = file.OpenReadStream();
 
+                    var functionUrl = _configuration["FunctionUrls:UploadFile"];
+
                     // uploading gile to the FILE SHARE
                     await _fileService.UploadFileAsync("contracts-logs", file.FileName, stream);
 
@@ -185,26 +213,6 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
 
             // redirecting to the index page
             return RedirectToAction("UploadContract");
-        }
-
-        // creating method to call the function - uploadblob
-        private async Task<string> CallBlobFunctionAsync(IFormFile file)
-        {
-            using var content = new MultipartFormDataContent();
-
-            using var stream = file.OpenReadStream();
-            var fileContent = new StreamContent(stream);
-            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-
-            content.Add(fileContent, "file", file.FileName);
-
-            var functionUrl = _configuration["FunctionUrls:UploadBlob"]; ;
-            functionUrl += $"&containterName=product-images&blobName={file.FileName};"
-        
-            var response = await _httpClient.PostAsync(functionUrl, content);
-            response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStringAsync();
         }
     }
 }
