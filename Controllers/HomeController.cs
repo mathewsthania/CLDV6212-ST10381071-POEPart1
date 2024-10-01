@@ -1,11 +1,13 @@
 using System.Diagnostics;
 using CLDV6212_ST10381071_POEPart1.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using CLDV6212_ST10381071_POEPart1.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Diagnostics.Eventing.Reader;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace CLDV6212_ST10381071_POEPart1.Controllers
 {
@@ -16,14 +18,19 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
         private readonly TableService _tableService;
         private readonly QueueService _queueService;
         private readonly FileService _fileService;
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
 
         // creating constructor to initialize the services - with dependency injection
-        public HomeController(BlobService blobService, TableService tableService, QueueService queueService, FileService fileService)
+        public HomeController(BlobService blobService, TableService tableService, QueueService queueService, FileService fileService, HttpClient httpClient, IConfiguration configuration)
         {
             _blobService = blobService;
             _tableService = tableService;
             _queueService = queueService;
             _fileService = fileService;
+            _httpClient = httpClient;
+            _configuration = configuration;
+            
         }
 
         // action created - to return the main view
@@ -72,10 +79,7 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
             {
                 try
                 {
-                    using var stream = file.OpenReadStream();
-
-                    // uploading the file to the BLOB STORAGE
-                    await _blobService.UploadBlobAsync("product-images", file.FileName, stream);
+                    var functionResponse = await CallBlobFunctionAsync(file);
 
                     TempData["SuccessMessage"] = "Image was successfully uploaded!";
                 }
@@ -83,6 +87,9 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
                 catch (Exception ex)
                 {
                     TempData["ErrorMessage"] = "Image failed to upload,Please try again!";
+
+                    Console.WriteLine($"Error: {ex}");
+                
                 }
             }
             else
@@ -127,6 +134,12 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
         [HttpPost]
         public async Task<IActionResult> ProcessOrder(string orderID)
         {
+            if (string.IsNullOrEmpty(orderID))
+            {
+                TempData["ErrorMessage"] = "Order ID cannot be empty.";
+                return RedirectToAction("ProcessOrder");
+            }
+
             try
             {
                 // sending a message to the queue to process the order 
@@ -172,6 +185,26 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
 
             // redirecting to the index page
             return RedirectToAction("UploadContract");
+        }
+
+        // creating method to call the function - uploadblob
+        private async Task<string> CallBlobFunctionAsync(IFormFile file)
+        {
+            using var content = new MultipartFormDataContent();
+
+            using var stream = file.OpenReadStream();
+            var fileContent = new StreamContent(stream);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+
+            content.Add(fileContent, "file", file.FileName);
+
+            var functionUrl = _configuration["FunctionUrls:UploadBlob"]; ;
+            functionUrl += $"&containterName=product-images&blobName={file.FileName};"
+        
+            var response = await _httpClient.PostAsync(functionUrl, content);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

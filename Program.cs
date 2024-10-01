@@ -17,6 +17,8 @@ namespace CLDV6212_ST10381071_POEPart1
             var configuration = builder.Configuration;
             var connectionString = configuration.GetConnectionString("AzureStorage");
 
+            builder.Services.AddHttpClient();
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
