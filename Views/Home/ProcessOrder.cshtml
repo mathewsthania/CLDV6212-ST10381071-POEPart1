@@ -34,7 +34,7 @@
 
     <!-- form to process an order -->
     <form asp-action="ProcessOrder" method="post">
-        <input type="text" name="orderID" placeholder="Order ID" class="form-control" />
+        <input type="text" name="orderID" placeholder="Order ID" class="form-control" required/>
 
         <button type="submit" class="processOrder-btn">Process Order</button>
     </form>

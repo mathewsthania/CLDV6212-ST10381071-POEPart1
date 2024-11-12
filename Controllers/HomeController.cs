@@ -11,23 +11,23 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
     public class HomeController : Controller
     {
         // declaring private readonly fields for the different storage services 
-        private readonly BlobService _blobService;
-        private readonly TableService _tableService;
-        private readonly QueueService _queueService;
-        private readonly FileService _fileService;
+        private readonly ImageService _imageService;
+        private readonly CustomerService _customerService;
+        private readonly OrderProcessService _orderProcessService;
+        private readonly DocumentService _documentService;
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
 
         // creating constructor to initialize the services - with dependency injection
-        public HomeController(BlobService blobService, TableService tableService, QueueService queueService, FileService fileService, HttpClient httpClient, IConfiguration configuration)
+        public HomeController(ImageService imageService, CustomerService customerService, OrderProcessService orderProcessService, DocumentService documentService, HttpClient httpClient, IConfiguration configuration)
         {
-            _blobService = blobService;
-            _tableService = tableService;
-            _queueService = queueService;
-            _fileService = fileService;
+            _imageService = imageService;
+            _customerService = customerService;
+			_orderProcessService = orderProcessService;
+            _documentService = documentService;
             _httpClient = httpClient;
             _configuration = configuration;
-            
+
         }
 
         // action created - to return the main view
@@ -60,7 +60,7 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        
+
         // action created - to return the error view - by requesting ID Information
         public IActionResult Error()
         {
@@ -72,86 +72,55 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
-            if (file == null || file.Length == 0)
+            if (file != null && file.Length > 0)
             {
-                TempData["ErrorMessage"] = "No file selected!";
-                return RedirectToAction("UploadImage");
-            }
-                
-            try
-            {
-                var functionResponse = await CallBlobFunctionAsync(file);
+                try
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await file.CopyToAsync(memoryStream);
+                        byte[] imageData = memoryStream.ToArray();
 
-                TempData["SuccessMessage"] = "Image was successfully uploaded!";
+                        await _imageService.InsertBlobAsync(imageData);
+
+                        TempData["SuccessMessage"] = "Image was uploaded successfully!";
+                        return RedirectToAction("UploadImage");
+                    }
+                }
+                catch
+                {
+                    TempData["ErrorMessage"] = "Error! An error occurred while uploading the image, please try again.";
+                    return RedirectToAction("UploadImage");
+                }
             }
 
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = "Image failed to upload,Please try again!";
-                Console.WriteLine($"Error: {ex}");
-                
-            }
-            
-            // redirecting to the index page
+            TempData["ErrorMessage"] = "Please select an image to upload!";
             return RedirectToAction("UploadImage");
         }
 
-        // creating method to call the function - uploadblob
-        private async Task<string> CallBlobFunctionAsync(IFormFile file)
-        {
-            using var content = new MultipartFormDataContent();
-            using var stream = file.OpenReadStream();
-
-            var fileContent = new StreamContent(stream);
-            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-
-            content.Add(fileContent, "file", file.FileName);
-
-            var functionUrl = _configuration["FunctionUrls:UploadBlob"]; 
-            functionUrl += $"&containerName=product-images&blobName={file.FileName}";
-
-            var response = await _httpClient.PostAsync(functionUrl, content);
-            response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStringAsync();
-        }
-
-        // action created - to handle adding a new customer profile
+        // method to upload customerProfile 
         [HttpPost]
         public async Task<IActionResult> AddCustomerProfile(CustomerProfile profile)
         {
-            if (profile == null)
+            if (ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Customer Profile is null, please try again!";
-                return RedirectToAction("AddCustomerProfile");
+                try
+                {
+                    await _customerService.InsertCustomerAsync(profile);
+                    TempData["SuccessMessage"] = "Customer profile was added successfully!";
+                }
+
+                catch
+                {
+                    TempData["ErrorMessage"] = "There was an error adding the customer profile, please try again!";
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Please fill in all the required fields!";
             }
 
-            try
-            {
-                var functionResponse = await CallStoreTableInfoFunctionAsync(profile);
-                TempData["SuccessMessage"] = "Customer Profile was successfully added!";
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = "Profile was not added! Please try again.";
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-
-            // Redirecting to the AddCustomerProfile page
             return RedirectToAction("AddCustomerProfile");
-        }
-
-        private async Task<string> CallStoreTableInfoFunctionAsync(CustomerProfile profile)
-        {
-            // Prepare the request data
-            var requestData = new StringContent($"tableName=customerProfiles&partitionKey={profile.PartitionKey}&rowKey={profile.RowKey}&firstName={profile.FirstName}&lastName={profile.LastName}&email={profile.Email}&phoneNumber={profile.PhoneNumber}", Encoding.UTF8, "application/x-www-form-urlencoded");
-
-            var functionUrl = _configuration["FunctionUrls:StoreTableInfo"]; // Adjust based on your configuration
-            var response = await _httpClient.PostAsync(functionUrl, requestData);
-
-            response.EnsureSuccessStatusCode(); // Will throw an exception if the response is not a success
-
-            return await response.Content.ReadAsStringAsync();
         }
 
         // action created - to handle processing an order
@@ -164,23 +133,19 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
                 return RedirectToAction("ProcessOrder");
             }
 
-            try
+            bool success = await _orderProcessService.ProcessOrderAsync(orderID);
+
+            if (success) 
             {
-                var functionUrl = _configuration["FunctionUrls:ProcessQueueMessage"];
-
-                // sending a message to the queue to process the order 
-                await _queueService.SendMessageAsync("order-processing", $"Processing order {orderID}");
-
                 TempData["SuccessMessage"] = "Order has been successfully processed!";
-            }
+				return RedirectToAction("ProcessOrder");
+			}
 
-            catch (Exception ex)
-            {
+            else
+            { 
                 TempData["ErrorMessage"] = "Failed to process order. Please try again!";
-            }
-            
-            // redirecting to the index page 
-            return RedirectToAction("ProcessOrder");
+				return RedirectToAction("ProcessOrder");
+			};
         }
 
 
@@ -188,31 +153,31 @@ namespace CLDV6212_ST10381071_POEPart1.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadContract(IFormFile file)
         {
-            if (file != null)
+            if (file == null || file.Length == 0)
             {
-                try
-                {
-                    using var stream = file.OpenReadStream();
-
-                    var functionUrl = _configuration["FunctionUrls:UploadFile"];
-
-                    // uploading gile to the FILE SHARE
-                    await _fileService.UploadFileAsync("contracts-logs", file.FileName, stream);
-
-                    TempData["SuccessMessage"] = "Contract has been successfully uploaded!";
-                }
-                catch (Exception ex)
-                {
-                    TempData["ErrorMessage"] = "Failed to upload contract. Please try again!";
-                }
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "No file selected!";
+                TempData["ErrorMessage"] = "Error! No document selected for upload.";
+                return RedirectToAction("UploadContract");
             }
 
-            // redirecting to the index page
-            return RedirectToAction("UploadContract");
+            try
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream);
+                    byte[] documentData = memoryStream.ToArray();
+
+                    await _documentService.InsertDocumentAsync(documentData, file.FileName);
+
+                    TempData["SuccessMessage"] = "Document was uploaded successfully!";
+                    return RedirectToAction("UploadContract");
+                }
+            }
+
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Error! An error occurred while uploading the document, please try again.";
+                return RedirectToAction("UploadDocument");
+            }
         }
     }
 }
